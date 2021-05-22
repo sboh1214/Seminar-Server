@@ -3,8 +3,7 @@ import { DataTypes, Model, Optional, Sequelize } from 'sequelize'
 interface UserAttributes {
   email: string
   secret: string
-  firstName?: string | null
-  lastName?: string | null
+  name?: string | null
   isAdmin?: boolean
   isSpeaker?: boolean
 }
@@ -17,8 +16,7 @@ export default class User
 {
   public email!: string
   public secret!: string
-  public firstName!: string | null
-  public lastName!: string | null
+  public name!: string | null
   public isAdmin: boolean = false
   public isSpeaker: boolean = false
 
@@ -38,11 +36,7 @@ export function initUser(sequelize: Sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      firstName: {
-        type: DataTypes.STRING,
-        defaultValue: null,
-      },
-      lastName: {
+      name: {
         type: DataTypes.STRING,
         defaultValue: null,
       },
