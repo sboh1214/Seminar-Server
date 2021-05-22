@@ -3,6 +3,8 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import { compareSync } from "bcrypt";
 import User from "../db/user";
+import { Code } from "../configs";
+import auth from "../middlewares/auth";
 
 const router = e.Router();
 
@@ -11,7 +13,6 @@ router.post("/signin", (req: e.Request, res: e.Response) => {
 
   User.findByPk(email)
     .then((user: User | null) => {
-      console.log(user);
       if (!user) return res.status(400).send("There is no such user");
 
       const isSamePassword = compareSync(password, user.secret);
@@ -19,12 +20,12 @@ router.post("/signin", (req: e.Request, res: e.Response) => {
       return res.json(createToken(email));
     })
     .catch(() => {
-      return res.status(500).send("DB Error");
+      return res.status(Code.InternalServerError).send("DB Error");
     });
 });
 
 router.get(
-  "/refresh",
+  "/refresh", auth,
   (req: e.Request, res: e.Response, next: e.NextFunction) => {
     authAndRes("jwt", req, res, next);
   }
