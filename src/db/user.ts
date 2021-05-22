@@ -1,29 +1,29 @@
-import { DataTypes, Model, Optional, Sequelize } from "sequelize";
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize'
 
 interface UserAttributes {
-  email: string;
-  secret: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  isAdmin?: boolean;
-  isSpeaker?: boolean;
+  email: string
+  secret: string
+  firstName?: string | null
+  lastName?: string | null
+  isAdmin?: boolean
+  isSpeaker?: boolean
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "email"> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'email'> {}
 
 export default class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public email!: string;
-  public secret!: string;
-  public firstName!: string | null;
-  public lastName!: string | null;
-  public isAdmin: boolean = false;
-  public isSpeaker: boolean = false;
+  public email!: string
+  public secret!: string
+  public firstName!: string | null
+  public lastName!: string | null
+  public isAdmin: boolean = false
+  public isSpeaker: boolean = false
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly createdAt!: Date
+  public readonly updatedAt!: Date
 }
 
 export function initUser(sequelize: Sequelize) {
@@ -57,7 +57,7 @@ export function initUser(sequelize: Sequelize) {
     },
     {
       sequelize,
-      modelName: "User",
-    }
-  );
+      modelName: 'User',
+    },
+  )
 }

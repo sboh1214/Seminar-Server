@@ -1,13 +1,18 @@
 import e from 'express'
-import {verify} from 'jsonwebtoken'
-import {Code, Configs} from '../configs';
+import { verify } from 'jsonwebtoken'
+import { Code, Configs } from '../configs'
 
-export default function auth(req: e.Request, res: e.Response, next: e.NextFunction){
+export default function auth(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
   try {
-    var decoded = verify(req.headers.authorization ?? "", Configs.jwtSecret);
+    const decoded = verify(req.headers.authorization ?? '', Configs.jwtSecret)
+    req.query.email = (decoded as { email: string }).email
     next()
-  } catch(err) {
+  } catch (err) {
     console.log(err)
-    res.status(Code.Unauthorized).send("Access denied")
+    res.status(Code.Unauthorized).send('Access denied')
   }
 }

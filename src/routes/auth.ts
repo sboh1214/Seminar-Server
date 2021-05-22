@@ -1,83 +1,48 @@
-import e from "express";
-import passport from "passport";
-import jwt from "jsonwebtoken";
-import { compareSync } from "bcrypt";
-import User from "../db/user";
-import { Code } from "../configs";
-import auth from "../middlewares/auth";
+import e from 'express'
+import jwt from 'jsonwebtoken'
+import { compareSync } from 'bcrypt'
+import User from '../db/user'
+import { Code } from '../configs'
+import auth from '../middlewares/auth'
 
-const router = e.Router();
+const router = e.Router()
 
-router.post("/signin", (req: e.Request, res: e.Response) => {
-  const { email, password } = req.body;
+router.post('/signin', (req: e.Request, res: e.Response) => {
+  const { email, password } = req.body
 
   User.findByPk(email)
     .then((user: User | null) => {
-      if (!user) return res.status(400).send("There is no such user");
+      if (!user) return res.status(400).send('There is no such user')
 
-      const isSamePassword = compareSync(password, user.secret);
-      if (!isSamePassword) return res.status(400).send("Wrong Password");
-      return res.json(createToken(email));
+      const isSamePassword = compareSync(password, user.secret)
+      if (!isSamePassword) return res.status(400).send('Wrong Password')
+      return res.json(createToken(email))
     })
     .catch(() => {
-      return res.status(Code.InternalServerError).send("DB Error");
-    });
-});
+      return res.status(Code.InternalServerError).send('DB Error')
+    })
+})
 
-router.get(
-  "/refresh", auth,
-  (req: e.Request, res: e.Response, next: e.NextFunction) => {
-    authAndRes("jwt", req, res, next);
-  }
-);
+router.get('/refresh', auth, (req: e.Request, res: e.Response) => {
+  return res.json(createToken(req.query.email as string))
+})
 
 function createToken(email: string) {
   const accessToken = jwt.sign(
     {
       email: email,
     },
-    process.env.JWT_SECRET_KEY ?? "JWT_SECRET_KEY",
-    { expiresIn: "1h" }
-  );
+    process.env.JWT_SECRET_KEY ?? 'JWT_SECRET_KEY',
+    { expiresIn: '1h' },
+  )
   const refreshToken = jwt.sign(
     {
       email: email,
     },
-    process.env.JWT_SECRET_KEY ?? "JWT_SECRET_KEY",
-    { expiresIn: "2week" }
-  );
-  return { accessToken, refreshToken };
+    process.env.JWT_SECRET_KEY ?? 'JWT_SECRET_KEY',
+    { expiresIn: '2week' },
+  )
+  return { accessToken, refreshToken }
 }
 
-function authAndRes(
-  type: string,
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction
-) {
-  passport.authenticate(type, { session: false }, (err, user, info) => {
-    if (err || !user) {
-      return res.status(400).json({ message: info ?? "error" });
-    }
-    if (!user) {
-      return res.status(400).json({ message: "No such email" });
-    }
-    const accessToken = jwt.sign(
-      {
-        email: user.email,
-      },
-      process.env.JWT_SECRET_KEY ?? "JWT_SECRET_KEY",
-      { expiresIn: "1h" }
-    );
-    const refreshToken = jwt.sign(
-      {
-        email: user.email,
-      },
-      process.env.JWT_SECRET_KEY ?? "JWT_SECRET_KEY",
-      { expiresIn: "2week" }
-    );
-    return res.json({ accessToken, refreshToken });
-  })(req, res, next);
-}
-
-export default router;
+export default router

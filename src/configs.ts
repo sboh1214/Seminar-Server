@@ -1,11 +1,12 @@
 export const Configs = {
+  production: false,
   port: 3000,
-  database: "postgres",
-  username: "postgres",
-  password: "password",
-  host: "localhost",
-  jwtSecret: "secret",
-};
+  database: 'postgres',
+  username: 'postgres',
+  password: 'password',
+  host: 'localhost',
+  jwtSecret: 'secret',
+}
 
 export const Code = {
   Ok: 200,
@@ -15,4 +16,4 @@ export const Code = {
   Forbidden: 403,
   InternalServerError: 500,
   NotImplemented: 501,
-};
+}
