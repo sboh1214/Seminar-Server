@@ -1,25 +1,14 @@
 import e from "express";
-import passport from "passport";
-import passportConfig from "./auth/passport";
 import bcrypt from "bcrypt";
-import AuthRouter from "./auth";
+import AuthRouter from "./routes/auth";
 import { Sequelize } from "sequelize";
 import User, { initUser } from "./db/user";
-
-const configs = {
-  port: 3000,
-  database: "postgres",
-  username: "postgres",
-  password: "password",
-  host: "localhost",
-};
+import {Configs} from "./configs";
 
 const app = e();
 
 app.use(e.json());
 app.use(e.urlencoded({ extended: true }));
-app.use(passport.initialize());
-passportConfig();
 
 app.get("/", (_: e.Request, res: e.Response) => {
   res.send("Hello World");
@@ -27,11 +16,11 @@ app.get("/", (_: e.Request, res: e.Response) => {
 app.use("/auth", AuthRouter);
 
 const sequelize = new Sequelize(
-  configs.database,
-  configs.username,
-  configs.password,
+  Configs.database,
+  Configs.username,
+  Configs.password,
   {
-    host: configs.host,
+    host: Configs.host,
     dialect: "postgres",
   }
 );
@@ -52,8 +41,8 @@ sequelize
       });
     }
 
-    app.listen(configs.port, () => {
-      console.log(`App listening on port ${configs.port}`);
+    app.listen(Configs.port, () => {
+      console.log(`App listening on port ${Configs.port}`);
     });
   })
   .catch((err) => {
