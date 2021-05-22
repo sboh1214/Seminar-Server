@@ -4,6 +4,8 @@ import AuthRouter from './routes/auth'
 import { Sequelize } from 'sequelize'
 import User, { initUser } from './db/user'
 import { Configs } from './configs'
+import Seminar, { initSeminar } from './db/seminar'
+import Series, { initSeries } from './db/series'
 
 const app = e()
 
@@ -31,6 +33,8 @@ sequelize
     console.log('Connection has been established successfully.')
 
     initUser(sequelize)
+    initSeminar(sequelize)
+    initSeries(sequelize)
 
     if (!Configs.production) {
       User.sync({ force: true }).then(() => {
@@ -39,6 +43,8 @@ sequelize
 
         User.create({ email: 'admin', secret: hash, isAdmin: true })
       })
+      Seminar.sync({ force: true })
+      Series.sync({ force: true })
     }
 
     app.listen(Configs.port, () => {
