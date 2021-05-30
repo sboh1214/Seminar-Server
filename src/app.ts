@@ -2,7 +2,7 @@ import e from 'express'
 import bcrypt from 'bcrypt'
 import AuthRouter from './routes/auth'
 import { Sequelize } from 'sequelize'
-import User, { initUser } from './db/user'
+import User, { createAssociations, initUser } from './db/user'
 import { Configs } from './configs'
 import Seminar, { initSeminar } from './db/seminar'
 import Series, { initSeries } from './db/series'
@@ -35,6 +35,7 @@ sequelize
     initUser(sequelize)
     initSeminar(sequelize)
     initSeries(sequelize)
+    createAssociations()
 
     if (!Configs.production) {
       User.sync({ force: true }).then(() => {
