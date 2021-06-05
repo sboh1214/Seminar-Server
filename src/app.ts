@@ -1,5 +1,6 @@
 import e from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import { genSaltSync, hashSync } from 'bcrypt'
 import AuthRouter from './routes/auth'
 import { Sequelize } from 'sequelize'
@@ -10,7 +11,8 @@ import Series, { initSeries } from './db/series'
 
 const app = e()
 
-app.use(cors({ origin: 'http://localhost:3000' }))
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+app.use(cookieParser('10'))
 app.use(e.json())
 app.use(e.urlencoded({ extended: true }))
 
