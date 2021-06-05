@@ -40,20 +40,39 @@ router.post('/signin', (req: e.Request, res: e.Response) => {
 
   User.findByPk(email)
     .then((user: User | null) => {
-      if (!user) return res.status(400).send('There is no such user')
+      if (!user)
+        return res.status(Code.BadRequest).send('There is no such user')
 
       const isSamePassword = compareSync(password, user.secret)
-      if (!isSamePassword) return res.status(400).send('Wrong Password')
-      return res.json(createToken(email))
+      if (!isSamePassword)
+        return res.status(Code.BadRequest).send('Wrong Password')
+
+      const { accessToken, refreshToken } = createToken(email)
+      return res
+        .cookie('accessToken', accessToken, { maxAge: 1000 * 60 * 60 })
+        .cookie('refreshToken', refreshToken, {
+          maxAge: 1000 * 60 * 60 * 24 * 14,
+        })
+        .send()
     })
     .catch(() => {
-      return res.status(Code.InternalServerError).send('DB Error')
+      return res.status(Code.InternalServerError).send('Failed to query user.')
     })
 })
 
-router.get('/refresh', auth, (req: e.Request, res: e.Response) => {
-  return res.json(createToken(req.query.email as string))
-})
+router.get(
+  '/refresh',
+  auth('refreshToken'),
+  (req: e.Request, res: e.Response) => {
+    const { accessToken, refreshToken } = createToken(req.cookies.refreshToken)
+    return res
+      .cookie('accessToken', accessToken, { maxAge: 1000 * 60 * 60 })
+      .cookie('refreshToken', refreshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 14,
+      })
+      .send()
+  },
+)
 
 function createToken(email: string) {
   const accessToken = jwt.sign(
