@@ -55,6 +55,10 @@ router.post('/signin', (req: e.Request, res: e.Response) => {
     })
 })
 
+router.get('/signout', (_: e.Request, res: e.Response) => {
+  res.clearCookie('accessToken').clearCookie('refreshToken').send()
+})
+
 router.get('/refresh', auth, (_: e.Request, res: e.Response) => {
   return res.send()
 })
