@@ -1,6 +1,6 @@
 export const Configs = {
   production: false,
-  port: 3000,
+  port: 8000,
   database: 'postgres',
   username: 'postgres',
   password: 'password',

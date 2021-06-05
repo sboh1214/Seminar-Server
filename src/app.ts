@@ -1,5 +1,6 @@
 import e from 'express'
-import bcrypt from 'bcrypt'
+import cors from 'cors'
+import { genSaltSync, hashSync } from 'bcrypt'
 import AuthRouter from './routes/auth'
 import { Sequelize } from 'sequelize'
 import User, { createAssociations, initUser } from './db/user'
@@ -9,6 +10,7 @@ import Series, { initSeries } from './db/series'
 
 const app = e()
 
+app.use(cors({ origin: 'http://localhost:3000' }))
 app.use(e.json())
 app.use(e.urlencoded({ extended: true }))
 
@@ -24,6 +26,7 @@ const sequelize = new Sequelize(
   {
     host: Configs.host,
     dialect: 'postgres',
+    logging: false,
   },
 )
 
@@ -39,10 +42,9 @@ sequelize
 
     if (!Configs.production) {
       User.sync({ force: true }).then(() => {
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync('admin', salt)
+        const hash = hashSync('admin', genSaltSync(10))
 
-        User.create({ email: 'admin', secret: hash, isAdmin: true })
+        User.create({ email: 'admin@admin.org', secret: hash, isAdmin: true })
       })
       Seminar.sync({ force: true })
       Series.sync({ force: true })
