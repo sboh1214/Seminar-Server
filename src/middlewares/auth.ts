@@ -1,7 +1,7 @@
 import e from 'express'
 import { verify } from 'jsonwebtoken'
 import { Code, Configs } from '../configs'
-import { createToken } from '../utils/utils'
+import { createToken, setCookies } from '../utils/utils'
 
 export default function auth(
   req: e.Request,
@@ -18,22 +18,7 @@ export default function auth(
   } catch (err) {
     try {
       const decoded = verify(req.signedCookies.refreshToken, Configs.jwtSecret)
-      const { accessToken, refreshToken } = createToken(
-        (decoded as { email: string }).email,
-      )
-      res
-        .cookie('accessToken', accessToken, {
-          maxAge: 1000 * 3600,
-          signed: true,
-          httpOnly: true,
-          sameSite: false,
-        })
-        .cookie('refreshToken', refreshToken, {
-          maxAge: 1000 * 3600 * 24 * 14,
-          signed: true,
-          httpOnly: true,
-          sameSite: false,
-        })
+      setCookies(res, createToken((decoded as { email: string }).email))
       next()
     } catch (err) {
       console.log(err)

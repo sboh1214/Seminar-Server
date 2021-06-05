@@ -1,7 +1,13 @@
+import e from 'express'
 import { sign } from 'jsonwebtoken'
 import { Configs } from '../configs'
 
-export function createToken(email: string) {
+type TokenSet = {
+  accessToken: string
+  refreshToken: string
+}
+
+export function createToken(email: string): TokenSet {
   const accessToken = sign(
     {
       email: email,
@@ -17,4 +23,20 @@ export function createToken(email: string) {
     { expiresIn: '2week' },
   )
   return { accessToken, refreshToken }
+}
+
+export function setCookies(res: e.Response, tokenSet: TokenSet) {
+  res
+    .cookie('accessToken', tokenSet.accessToken, {
+      maxAge: 1000 * 3600,
+      signed: true,
+      httpOnly: true,
+      sameSite: false,
+    })
+    .cookie('refreshToken', tokenSet.refreshToken, {
+      maxAge: 1000 * 3600 * 24 * 14,
+      signed: true,
+      httpOnly: true,
+      sameSite: false,
+    })
 }
