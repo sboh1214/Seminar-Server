@@ -16,7 +16,8 @@ import Series from './series'
 interface UserAttributes {
   email: string
   secret: string
-  name?: string | null
+  localName?: string | null
+  englishName?: string | null
   isAdmin?: boolean
   isSpeaker?: boolean
 }
@@ -29,7 +30,8 @@ export default class User
 {
   public email!: string
   public secret!: string
-  public name!: string | null
+  public localName: string | null
+  public englishName: string | null
   public isAdmin: boolean = false
   public isSpeaker: boolean = false
 
@@ -70,7 +72,11 @@ export function initUser(sequelize: Sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      name: {
+      localName: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
+      englishName: {
         type: DataTypes.STRING,
         defaultValue: null,
       },

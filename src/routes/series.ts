@@ -13,7 +13,7 @@ router.get('/query', [auth], (req: e.Request, res: e.Response) => {
 })
 
 router.post('/update', [auth], (req: e.Request, res: e.Response) => {
-  Series.update()
+  // Series.update()
 })
 
 router.get('/remove', [auth], (req: e.Request, res: e.Response) => {
