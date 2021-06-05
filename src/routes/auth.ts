@@ -3,7 +3,7 @@ import { compareSync, genSaltSync, hashSync } from 'bcrypt'
 import User from '../db/user'
 import { Code } from '../configs'
 import auth from '../middlewares/auth'
-import { createToken } from '../utils/utils'
+import { createToken, setCookies } from '../utils/utils'
 
 const router = e.Router()
 
@@ -47,21 +47,8 @@ router.post('/signin', (req: e.Request, res: e.Response) => {
       if (!isSamePassword)
         return res.status(Code.BadRequest).send('Wrong Password')
 
-      const { accessToken, refreshToken } = createToken(email)
-      return res
-        .cookie('accessToken', accessToken, {
-          maxAge: 1000 * 3600,
-          signed: true,
-          httpOnly: true,
-          sameSite: false,
-        })
-        .cookie('refreshToken', refreshToken, {
-          maxAge: 1000 * 3600 * 24 * 14,
-          signed: true,
-          httpOnly: true,
-          sameSite: false,
-        })
-        .send()
+      setCookies(res, createToken(email))
+      return res.send()
     })
     .catch(() => {
       return res.status(Code.InternalServerError).send('Failed to query user.')
