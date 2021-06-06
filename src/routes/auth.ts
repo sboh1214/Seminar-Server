@@ -63,4 +63,14 @@ router.get('/refresh', auth, (_: e.Request, res: e.Response) => {
   return res.send()
 })
 
+router.get('/current', auth, (req: e.Request, res: e.Response) => {
+  User.findByPk(req.query.email as string)
+    .then((user) => {
+      res.send(user)
+    })
+    .catch((err) => {
+      res.status(Code.InternalServerError).send(err)
+    })
+})
+
 export default router
