@@ -17,7 +17,28 @@ router.post('/create', [auth], (req: e.Request, res: e.Response) => {
 })
 
 router.get('/query', [auth], (req: e.Request, res: e.Response) => {
-  Seminar.findAll()
+  Seminar.findAll({ order: ['updatedAt', 'DESC'], limit: 100 })
+    .then((seminars) => {
+      return res.send(seminars)
+    })
+    .catch((err) => {
+      return res.status(Code.InternalServerError).send(err)
+    })
+})
+
+router.get('/query/:id', (req: e.Request, res: e.Response) => {
+  Seminar.findByPk(req.params.id as string)
+    .then((seminar: Seminar | null) => {
+      if (seminar == null) {
+        return res
+          .status(Code.NotFound)
+          .send(`There is no seminar with id ${req.params.id}`)
+      }
+      return res.send(seminar)
+    })
+    .catch((err) => {
+      return res.status(Code.InternalServerError).send(err)
+    })
 })
 
 router.post('/update', [auth], (req: e.Request, res: e.Response) => {
