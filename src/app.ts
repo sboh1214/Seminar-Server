@@ -13,7 +13,7 @@ import Series, { initSeries } from './db/series'
 
 const app = e()
 
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+app.use(cors({ origin: Configs.corsOrigin, credentials: true }))
 app.use(cookieParser('10'))
 app.use(e.json())
 app.use(e.urlencoded({ extended: true }))
@@ -33,6 +33,7 @@ const sequelize = new Sequelize(
     host: Configs.host,
     dialect: 'postgres',
     logging: false,
+    port: Configs.dbPort,
   },
 )
 
@@ -46,8 +47,8 @@ sequelize
     initSeries(sequelize)
     createAssociations()
 
-    if (!Configs.production) {
-      User.sync({ force: true }).then(() => {
+    User.sync({ force: Configs.isTest }).then(() => {
+      if (Configs.isTest) {
         const hash = hashSync('admin', genSaltSync(10))
 
         User.create({
@@ -55,10 +56,10 @@ sequelize
           secret: hash,
           role: UserRole.ADMIN,
         })
-      })
-      Seminar.sync({ force: true })
-      Series.sync({ force: true })
-    }
+      }
+    })
+    Seminar.sync({ force: Configs.isTest })
+    Series.sync({ force: Configs.isTest })
 
     app.listen(Configs.port, () => {
       console.log(`App listening on port ${Configs.port}`)
