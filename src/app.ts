@@ -6,7 +6,7 @@ import AuthRouter from './routes/auth'
 import SeminarRouter from './routes/seminar'
 import SeriesRouter from './routes/series'
 import { Sequelize } from 'sequelize'
-import User, { createAssociations, initUser } from './db/user'
+import User, { createAssociations, initUser, UserRole } from './db/user'
 import { Configs } from './configs'
 import Seminar, { initSeminar } from './db/seminar'
 import Series, { initSeries } from './db/series'
@@ -50,7 +50,11 @@ sequelize
       User.sync({ force: true }).then(() => {
         const hash = hashSync('admin', genSaltSync(10))
 
-        User.create({ email: 'admin@admin.org', secret: hash, isAdmin: true })
+        User.create({
+          email: 'admin@admin.org',
+          secret: hash,
+          role: UserRole.ADMIN,
+        })
       })
       Seminar.sync({ force: true })
       Series.sync({ force: true })

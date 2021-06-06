@@ -13,13 +13,18 @@ import {
 import Seminar from './seminar'
 import Series from './series'
 
+export enum UserRole {
+  NONE = 'NONE',
+  SPEAKER = 'SPEAKER',
+  ADMIN = 'ADMIN',
+}
+
 interface UserAttributes {
   email: string
   secret: string
   localName?: string | null
   englishName?: string | null
-  isAdmin?: boolean
-  isSpeaker?: boolean
+  role?: UserRole
 }
 
 interface UserCreationAttributes extends Optional<UserAttributes, 'email'> {}
@@ -32,8 +37,7 @@ export default class User
   public secret!: string
   public localName: string | null
   public englishName: string | null
-  public isAdmin: boolean = false
-  public isSpeaker: boolean = false
+  public role: UserRole
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -80,13 +84,9 @@ export function initUser(sequelize: Sequelize) {
         type: DataTypes.STRING,
         defaultValue: null,
       },
-      isAdmin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      isSpeaker: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+      role: {
+        type: DataTypes.ENUM(UserRole.NONE, UserRole.SPEAKER, UserRole.ADMIN),
+        defaultValue: UserRole.NONE,
       },
     },
     {

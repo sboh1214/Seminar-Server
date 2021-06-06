@@ -1,7 +1,7 @@
 import e from 'express'
 import { verify } from 'jsonwebtoken'
 import { Code, Configs } from '../configs'
-import User from '../db/user'
+import User, { UserRole } from '../db/user'
 import { createToken, setCookies } from '../utils/utils'
 
 export default function auth(
@@ -33,19 +33,23 @@ export function authRole(role: 'speaker' | 'admin') {
   return (req: e.Request, res: e.Response, next: e.NextFunction) => {
     User.findByPk(req.query.email as string).then((user) => {
       if (!user) {
-        res.status(Code.BadRequest).send('There is no such user.')
+        return res.status(Code.BadRequest).send('There is no such user.')
       }
       if (role === 'speaker') {
-        if (user?.isSpeaker) {
+        if (user?.role === UserRole.SPEAKER || user?.role === UserRole.ADMIN) {
           return next()
         } else {
-          res.status(Code.Unauthorized).send(`User has no role "${role}"`)
+          return res
+            .status(Code.Unauthorized)
+            .send(`User has no role "${role}"`)
         }
       } else if (role === 'admin') {
-        if (user?.isAdmin) {
+        if (user?.role === UserRole.ADMIN) {
           return next()
         } else {
-          res.status(Code.Unauthorized).send(`User has no role "${role}"`)
+          return res
+            .status(Code.Unauthorized)
+            .send(`User has no role "${role}"`)
         }
       }
     })
