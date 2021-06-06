@@ -1,12 +1,16 @@
 import e from 'express'
 import Series from '../db/series'
-import auth from '../middlewares/auth'
+import auth, { authRole } from '../middlewares/auth'
 
 const router = e.Router()
 
-router.post('/create', [auth], (req: e.Request, res: e.Response) => {
-  Series.create()
-})
+router.post(
+  '/create',
+  [auth, authRole('speaker')],
+  (req: e.Request, res: e.Response) => {
+    Series.create()
+  },
+)
 
 router.get('/query', [auth], (req: e.Request, res: e.Response) => {
   Series.findAll()

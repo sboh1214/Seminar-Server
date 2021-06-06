@@ -1,20 +1,24 @@
 import e from 'express'
 import { Code } from '../configs'
 import Seminar from '../db/seminar'
-import auth from '../middlewares/auth'
+import auth, { authRole } from '../middlewares/auth'
 
 const router = e.Router()
 
-router.post('/create', [auth], (req: e.Request, res: e.Response) => {
-  Seminar.create({ title: req.body.title, description: req.body.description })
-    .then((seminar) => {
-      return res.status(Code.Created).send(String(seminar.id))
-    })
-    .catch((reason) => {
-      console.log(reason)
-      return res.status(Code.InternalServerError).send(reason)
-    })
-})
+router.post(
+  '/create',
+  [auth, authRole('speaker')],
+  (req: e.Request, res: e.Response) => {
+    Seminar.create({ title: req.body.title, description: req.body.description })
+      .then((seminar) => {
+        return res.status(Code.Created).send(String(seminar.id))
+      })
+      .catch((reason) => {
+        console.log(reason)
+        return res.status(Code.InternalServerError).send(reason)
+      })
+  },
+)
 
 router.get('/query', [auth], (req: e.Request, res: e.Response) => {
   Seminar.findAll({ order: ['updatedAt', 'DESC'], limit: 100 })
