@@ -3,6 +3,8 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { genSaltSync, hashSync } from 'bcrypt'
 import AuthRouter from './routes/auth'
+import SeminarRouter from './routes/seminar'
+import SeriesRouter from './routes/series'
 import { Sequelize } from 'sequelize'
 import User, { createAssociations, initUser } from './db/user'
 import { Configs } from './configs'
@@ -20,6 +22,8 @@ app.get('/', (_: e.Request, res: e.Response) => {
   res.send('Hello World')
 })
 app.use('/auth', AuthRouter)
+app.use('/seminar', SeminarRouter)
+app.use('/series', SeriesRouter)
 
 const sequelize = new Sequelize(
   Configs.database,

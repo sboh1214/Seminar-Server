@@ -15,9 +15,9 @@ interface SeminarAttributes {
   id: number
   title: string
   description?: string | null
-  startTime: Date
-  endTime: Date
-  onlineLink: [string]
+  startTime?: Date | null
+  endTime?: Date | null
+  onlineLink?: [string] | null
   series?: number | null
 }
 
@@ -30,9 +30,9 @@ export default class Seminar
   public id!: number
   public title: string
   public description?: string | null
-  public startTime: Date
-  public endTime: Date
-  public onlineLink: [string]
+  public startTime?: Date | null
+  public endTime?: Date | null
+  public onlineLink?: [string] | null
 
   public series?: number | null
 
