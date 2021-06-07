@@ -1,7 +1,7 @@
 import e from 'express'
 import { Code } from '../configs'
 import Seminar from '../db/seminar'
-import auth, { authRole } from '../middlewares/auth'
+import auth, { authRole, authUserInSeminar } from '../middlewares/auth'
 
 const router = e.Router()
 
@@ -56,25 +56,39 @@ router.get('/query/:id', (req: e.Request, res: e.Response) => {
     })
 })
 
-router.post('/update/:id', [auth], (req: e.Request, res: e.Response) => {
-  Seminar.update(
-    { title: req.body.title, description: req.body.description },
-    { where: { id: req.params.id } },
-  )
-    .then((value) => {
-      if (value[0] === 1) {
-        return res.send(`Successfully update seminar id ${value[1][0].id}`)
-      } else {
-        return res.status(Code.InternalServerError).send('Error with ID')
-      }
-    })
-    .catch((err) => {
-      return res.status(Code.InternalServerError).send(err)
-    })
-})
+router.post(
+  '/update/:id',
+  [auth, authUserInSeminar],
+  (req: e.Request, res: e.Response) => {
+    Seminar.update(
+      { title: req.body.title, description: req.body.description },
+      { where: { id: req.params.id } },
+    )
+      .then((value) => {
+        if (value[0] === 1) {
+          return res.send(`Successfully update seminar id ${value[1][0].id}`)
+        } else {
+          return res.status(Code.InternalServerError).send('Error with ID')
+        }
+      })
+      .catch((err) => {
+        return res.status(Code.InternalServerError).send(err)
+      })
+  },
+)
 
-router.get('/remove', [auth], (req: e.Request, res: e.Response) => {
-  Seminar.destroy()
-})
+router.get(
+  '/delete/:id',
+  [auth, authUserInSeminar],
+  (req: e.Request, res: e.Response) => {
+    Seminar.destroy({ where: { id: req.params.id } })
+      .then((_) => {
+        return res.send('Successfully deleted')
+      })
+      .catch((err) => {
+        return res.status(Code.InternalServerError).send(err)
+      })
+  },
+)
 
 export default router

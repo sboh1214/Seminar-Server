@@ -1,6 +1,8 @@
 import e from 'express'
 import { verify } from 'jsonwebtoken'
 import { Code, Configs } from '../configs'
+import Seminar from '../db/seminar'
+import Series from '../db/series'
 import User, { UserRole } from '../db/user'
 import { createToken, setCookies } from '../utils/utils'
 
@@ -54,4 +56,46 @@ export function authRole(role: 'speaker' | 'admin') {
       }
     })
   }
+}
+
+export function authUserInSeminar(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  Seminar.findByPk(req.params.id as string).then((seminar) => {
+    if (!seminar) {
+      return res
+        .status(Code.NotFound)
+        .send(`There is no seminar with ID "${req.params.id}"`)
+    }
+    if (seminar.hasUser(req.query.email as string)) {
+      return next()
+    } else {
+      return res
+        .status(Code.Unauthorized)
+        .send('You are not owner of this seminar')
+    }
+  })
+}
+
+export function authUserInSeries(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  Series.findByPk(req.params.id as string).then((series) => {
+    if (!series) {
+      return res
+        .status(Code.NotFound)
+        .send(`There is no series with ID "${req.params.id}"`)
+    }
+    if (series.hasUser(req.query.email as string)) {
+      return next()
+    } else {
+      return res
+        .status(Code.Unauthorized)
+        .send('You are not owner of this series')
+    }
+  })
 }

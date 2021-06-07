@@ -1,7 +1,7 @@
 import e from 'express'
 import { Code } from '../configs'
 import Series from '../db/series'
-import auth, { authRole } from '../middlewares/auth'
+import auth, { authRole, authUserInSeries } from '../middlewares/auth'
 
 const router = e.Router()
 
@@ -68,8 +68,18 @@ router.post('/update/:id', [auth], (req: e.Request, res: e.Response) => {
     })
 })
 
-router.get('/remove', [auth], (req: e.Request, res: e.Response) => {
-  Series.destroy()
-})
+router.get(
+  '/delete/:id',
+  [auth, authUserInSeries],
+  (req: e.Request, res: e.Response) => {
+    Series.destroy({ where: { id: req.params.id } })
+      .then((_) => {
+        return res.send('Successfully deleted.')
+      })
+      .catch((err) => {
+        return res.status(Code.InternalServerError).send(err)
+      })
+  },
+)
 
 export default router
