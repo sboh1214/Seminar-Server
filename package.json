@@ -4,8 +4,9 @@
   "description": "",
   "main": "build/app.js",
   "scripts": {
-    "start": "nodemon --watch src --delay 1 --exec 'ts-node' src/app.ts",
-    "build": "tsc",
+    "dev": "nodemon --watch src --delay 1 --exec 'ts-node' src/app.ts",
+    "start": "node build/app.js",
+    "heroku-postbuild": "tsc",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "lint": "eslint ./src --fix --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
