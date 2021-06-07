@@ -47,7 +47,12 @@ sequelize
     initSeries(sequelize)
     createAssociations()
 
-    User.sync({ force: Configs.isTest }).then(() => {
+    const promises = [
+      User.sync({ force: Configs.isTest }),
+      Seminar.sync({ force: Configs.isTest }),
+      Series.sync({ force: Configs.isTest }),
+    ]
+    Promise.all(promises).then(() => {
       if (Configs.isTest) {
         const hash = hashSync('admin', genSaltSync(10))
 
@@ -57,9 +62,10 @@ sequelize
           role: UserRole.ADMIN,
         })
       }
+      sequelize.sync().then(() => {
+        console.log('Database sync completed')
+      })
     })
-    Seminar.sync({ force: Configs.isTest })
-    Series.sync({ force: Configs.isTest })
 
     app.listen(Configs.port, () => {
       console.log(`App listening on port ${Configs.port}`)

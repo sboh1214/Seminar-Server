@@ -80,6 +80,7 @@ export function initSeminar(sequelize: Sequelize) {
       sequelize,
       modelName: 'Seminar',
       tableName: 'Seminars',
+      freezeTableName: true,
     },
   )
 }

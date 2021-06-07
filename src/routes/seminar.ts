@@ -9,9 +9,20 @@ router.post(
   '/create',
   [auth, authRole('speaker')],
   (req: e.Request, res: e.Response) => {
-    Seminar.create({ title: req.body.title, description: req.body.description })
+    Seminar.create({
+      title: req.body.title,
+      description: req.body.description,
+    })
       .then((seminar) => {
-        return res.status(Code.Created).send(String(seminar.id))
+        seminar
+          .addUser(req.query.email as string)
+          .then(() => {
+            return res.status(Code.Created).send(String(seminar.id))
+          })
+          .catch((err) => {
+            console.log(err)
+            return res.status(Code.InternalServerError).send(err)
+          })
       })
       .catch((reason) => {
         console.log(reason)
@@ -45,8 +56,21 @@ router.get('/query/:id', (req: e.Request, res: e.Response) => {
     })
 })
 
-router.post('/update', [auth], (req: e.Request, res: e.Response) => {
-  // Series.update()
+router.post('/update/:id', [auth], (req: e.Request, res: e.Response) => {
+  Seminar.update(
+    { title: req.body.title, description: req.body.description },
+    { where: { id: req.params.id } },
+  )
+    .then((value) => {
+      if (value[0] === 1) {
+        return res.send(`Successfully update seminar id ${value[1][0].id}`)
+      } else {
+        return res.status(Code.InternalServerError).send('Error with ID')
+      }
+    })
+    .catch((err) => {
+      return res.status(Code.InternalServerError).send(err)
+    })
 })
 
 router.get('/remove', [auth], (req: e.Request, res: e.Response) => {

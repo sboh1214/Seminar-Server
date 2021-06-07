@@ -15,7 +15,16 @@ router.post(
       seminars: req.body.seminars,
     })
       .then((series) => {
-        return res.status(Code.Created).send(String(series.id))
+        const promises = req.body.users.map((email: string) => {
+          return series.addUser(email)
+        })
+        Promise.all(promises)
+          .then(() => {
+            return res.status(Code.Created).send(String(series.id))
+          })
+          .catch((err) => {
+            return res.status(Code.InternalServerError).send(err)
+          })
       })
       .catch((err) => {
         return res.status(Code.InternalServerError).send(err)
@@ -42,8 +51,21 @@ router.get('/query/:id', [auth], (req: e.Request, res: e.Response) => {
     })
 })
 
-router.post('/update', [auth], (req: e.Request, res: e.Response) => {
-  // Series.update()
+router.post('/update/:id', [auth], (req: e.Request, res: e.Response) => {
+  Series.update(
+    { title: req.body.title, description: req.body.description },
+    { where: { id: req.params.id } },
+  )
+    .then((value) => {
+      if (value[0] === 1) {
+        return res.send(`Successfully update series id ${value[1][0].id}`)
+      } else {
+        return res.status(Code.InternalServerError).send('Error with ID')
+      }
+    })
+    .catch((err) => {
+      return res.status(Code.InternalServerError).send(err)
+    })
 })
 
 router.get('/remove', [auth], (req: e.Request, res: e.Response) => {

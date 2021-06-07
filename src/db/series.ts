@@ -67,6 +67,7 @@ export function initSeries(sequelize: Sequelize) {
       sequelize,
       modelName: 'Series',
       tableName: 'Series',
+      freezeTableName: true,
     },
   )
 }
