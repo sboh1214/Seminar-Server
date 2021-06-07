@@ -61,7 +61,11 @@ router.post(
   [auth, authUserInSeminar],
   (req: e.Request, res: e.Response) => {
     Seminar.update(
-      { title: req.body.title, description: req.body.description },
+      {
+        title: req.body.title,
+        description: req.body.description,
+        series: req.body.series,
+      },
       { where: { id: req.params.id } },
     )
       .then((value) => {

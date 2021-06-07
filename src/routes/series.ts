@@ -59,7 +59,11 @@ router.get('/query/:id', (req: e.Request, res: e.Response) => {
 
 router.post('/update/:id', [auth], (req: e.Request, res: e.Response) => {
   Series.update(
-    { title: req.body.title, description: req.body.description },
+    {
+      title: req.body.title,
+      description: req.body.description,
+      seminars: req.body.seminars,
+    },
     { where: { id: req.params.id } },
   )
     .then((value) => {

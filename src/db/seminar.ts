@@ -18,7 +18,7 @@ interface SeminarAttributes {
   startTime?: Date | null
   endTime?: Date | null
   onlineLink?: [string] | null
-  series?: number | null
+  series?: [number] | null
 }
 
 interface SeminarCreationAttributes extends Optional<SeminarAttributes, 'id'> {}
@@ -34,7 +34,7 @@ export default class Seminar
   public endTime?: Date | null
   public onlineLink?: [string] | null
 
-  public series?: number | null
+  public series?: [number] | null
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -73,7 +73,7 @@ export function initSeminar(sequelize: Sequelize) {
         type: DataTypes.ARRAY(DataTypes.STRING),
       },
       series: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
       },
     },
     {
