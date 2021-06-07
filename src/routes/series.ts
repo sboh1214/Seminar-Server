@@ -32,11 +32,17 @@ router.post(
   },
 )
 
-router.get('/query', [auth], (req: e.Request, res: e.Response) => {
+router.get('/query', (req: e.Request, res: e.Response) => {
   Series.findAll()
+    .then((seriesArray) => {
+      return res.send(seriesArray)
+    })
+    .catch((err) => {
+      return res.status(Code.InternalServerError).send(err)
+    })
 })
 
-router.get('/query/:id', [auth], (req: e.Request, res: e.Response) => {
+router.get('/query/:id', (req: e.Request, res: e.Response) => {
   Series.findByPk(req.params.id as string)
     .then((series: Series | null) => {
       if (series == null) {

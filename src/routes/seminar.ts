@@ -31,8 +31,8 @@ router.post(
   },
 )
 
-router.get('/query', [auth], (req: e.Request, res: e.Response) => {
-  Seminar.findAll({ order: ['updatedAt', 'DESC'], limit: 100 })
+router.get('/query', (req: e.Request, res: e.Response) => {
+  Seminar.findAll()
     .then((seminars) => {
       return res.send(seminars)
     })
