@@ -31,12 +31,12 @@ export function setCookies(res: e.Response, tokenSet: TokenSet) {
       maxAge: 1000 * 3600,
       signed: true,
       httpOnly: true,
-      sameSite: false,
+      sameSite: true,
     })
     .cookie('refreshToken', tokenSet.refreshToken, {
       maxAge: 1000 * 3600 * 24 * 14,
       signed: true,
       httpOnly: true,
-      sameSite: false,
+      sameSite: true,
     })
 }

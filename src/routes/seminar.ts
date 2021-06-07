@@ -12,6 +12,7 @@ router.post(
     Seminar.create({
       title: req.body.title,
       description: req.body.description,
+      onlineLink: req.body.onlineLink,
     })
       .then((seminar) => {
         seminar
@@ -64,6 +65,7 @@ router.post(
       {
         title: req.body.title,
         description: req.body.description,
+        onlineLink: req.body.onlineLink,
         series: req.body.series,
       },
       { where: { id: req.params.id } },
