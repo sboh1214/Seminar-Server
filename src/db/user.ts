@@ -93,6 +93,7 @@ export function initUser(sequelize: Sequelize) {
       sequelize,
       modelName: 'User',
       tableName: 'Users',
+      freezeTableName: true,
     },
   )
 }
