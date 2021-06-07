@@ -53,15 +53,15 @@ sequelize
       Series.sync({ force: Configs.isTest }),
     ]
     Promise.all(promises).then(() => {
-      if (Configs.isTest) {
-        const hash = hashSync('admin', genSaltSync(10))
+      // if (Configs.isTest) {
+      const hash = hashSync('admin', genSaltSync(10))
 
-        User.create({
-          email: 'admin@admin.org',
-          secret: hash,
-          role: UserRole.ADMIN,
-        })
-      }
+      User.create({
+        email: 'admin@admin.org',
+        secret: hash,
+        role: UserRole.ADMIN,
+      })
+      // }
       sequelize.sync().then(() => {
         console.log('Database sync completed')
       })

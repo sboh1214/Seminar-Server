@@ -1,1 +1,1 @@
-web: npm run build && node dist/bundle.js
+web: npm run build && node build/app.js
