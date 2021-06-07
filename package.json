@@ -2,7 +2,7 @@
   "name": "seminar-server",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/app.ts",
+  "main": "build/app.js",
   "scripts": {
     "start": "nodemon --watch src --delay 1 --exec 'ts-node' src/app.ts",
     "build": "webpack",

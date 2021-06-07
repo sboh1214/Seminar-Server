@@ -2,7 +2,7 @@ const isTest = process.env.NODE_ENV !== 'production'
 
 export const Configs = {
   isTest: isTest,
-  port: isTest ? 8000 : 58000,
+  port: 8000,
   database: 'postgres',
   username: 'postgres',
   password: isTest ? 'password' : (process.env.PASSWORD as string),
