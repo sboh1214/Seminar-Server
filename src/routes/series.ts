@@ -15,14 +15,13 @@ router.post(
       seminars: req.body.seminars,
     })
       .then((series) => {
-        const promises = req.body.users.map((email: string) => {
-          return series.addUser(email)
-        })
-        Promise.all(promises)
+        series
+          .addUser(req.query.email as string)
           .then(() => {
             return res.status(Code.Created).send(String(series.id))
           })
           .catch((err) => {
+            console.log(err)
             return res.status(Code.InternalServerError).send(err)
           })
       })
