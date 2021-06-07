@@ -57,13 +57,20 @@ sequelize
         console.log('Database sync completed')
         // if (Configs.isTest) {
         const hash = hashSync('admin', genSaltSync(10))
-        User.create({
-          email: 'admin@admin.org',
-          secret: hash,
-          role: UserRole.ADMIN,
-        }).then(() => {
-          console.log('Created Admin user.')
+        User.findOrCreate({
+          where: {
+            email: 'admin@admin.org',
+            secret: hash,
+            role: UserRole.ADMIN,
+          },
         })
+          .then(() => {
+            console.log('Created Admin user.')
+          })
+          .catch((err) => {
+            console.log('Failed to create admin user.')
+            console.log(err)
+          })
         // }
       })
     })
