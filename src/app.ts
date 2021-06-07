@@ -5,6 +5,8 @@ import { genSaltSync, hashSync } from 'bcrypt'
 import AuthRouter from './routes/auth'
 import SeminarRouter from './routes/seminar'
 import SeriesRouter from './routes/series'
+import AdminRouter from './routes/admin'
+import UserRouter from './routes/user'
 import { Sequelize } from 'sequelize'
 import User, { createAssociations, initUser, UserRole } from './db/user'
 import { Configs } from './configs'
@@ -19,11 +21,13 @@ app.use(e.json())
 app.use(e.urlencoded({ extended: true }))
 
 app.get('/', (_: e.Request, res: e.Response) => {
-  res.send('Hello World')
+  res.send('SPARCS 신입생 프로젝트 세미나 시스템 서버')
 })
+app.use('/admin', AdminRouter)
 app.use('/auth', AuthRouter)
 app.use('/seminar', SeminarRouter)
 app.use('/series', SeriesRouter)
+app.use('/user', UserRouter)
 
 const sequelize = new Sequelize(
   Configs.database,

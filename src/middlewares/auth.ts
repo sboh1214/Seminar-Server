@@ -99,3 +99,22 @@ export function authUserInSeries(
     }
   })
 }
+
+export function authAdmin(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  User.findByPk(req.query.email as string).then((user) => {
+    if (!user) {
+      return res
+        .status(Code.NotFound)
+        .send(`There is no user with email "${req.query.email}"`)
+    }
+    if (user?.role === UserRole.ADMIN) {
+      return next()
+    } else {
+      return res.status(Code.Unauthorized).send('You are not admin user.')
+    }
+  })
+}
